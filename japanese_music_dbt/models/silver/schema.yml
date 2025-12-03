@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: silver_artists
+    description: "Cleaned and standardized artist data"
+    columns:
+      - name: artist_id
+        description: "Spotify artist ID"
+        tests:
+          - unique
+          - not_null
+      - name: artist_name
+        description: "Artist name (cleaned)"
+        tests:
+          - not_null
+
+  - name: silver_tracks
+    description: "Cleaned and standardized track data"
+    columns:
+      - name: track_id
+        description: "Spotify track ID"
+        tests:
+          - unique
+          - not_null
+      - name: track_name
+        description: "Track name (cleaned)"
+        tests:
+          - not_null
+
+  - name: silver_audio_features
+    description: "Standardized audio features with quality checks"
+    columns:
+      - name: track_id
+        description: "Spotify track ID"
+        tests:
+          - unique
+          - not_null

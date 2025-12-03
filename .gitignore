@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Environment variables
+.env
+
+# DuckDB database files
+*.duckdb
+*.duckdb.wal
+
+# dbt
+japanese_music_dbt/target/
+japanese_music_dbt/dbt_packages/
+japanese_music_dbt/logs/
+
+# Data files (too large for git)
+data/bronze/*.json
+data/bronze/*.csv
+data/silver/*.csv
+data/gold/*.csv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Streamlit
+.streamlit/
+
+# Logs
+*.log

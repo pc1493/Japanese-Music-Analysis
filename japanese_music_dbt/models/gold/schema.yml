@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: gold_artist_popularity_trends
+    description: "Artist popularity metrics and trends over time"
+
+  - name: gold_audio_feature_analysis
+    description: "Audio feature aggregations by genre and artist"
+
+  - name: gold_genre_trends
+    description: "Genre growth patterns and popularity trends"
+
+  - name: gold_hidden_gems
+    description: "Discovery metrics for high-quality but underrated tracks"

@@ -1,0 +1,54 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'japanese_music_dbt'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'japanese_music_dbt'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+
+# Configuring models - Medallion Architecture
+# Bronze = Raw data from API
+# Silver = Cleaned and standardized
+# Gold = Analytics-ready aggregations
+models:
+  japanese_music_dbt:
+    # Bronze layer - raw data from Spotify API
+    bronze:
+      +materialized: table
+      +schema: bronze
+      +tags: ['bronze', 'raw']
+
+    # Silver layer - cleaned and standardized data
+    silver:
+      +materialized: table
+      +schema: silver
+      +tags: ['silver', 'cleaned']
+
+    # Gold layer - analytics-ready aggregations
+    gold:
+      +materialized: table
+      +schema: gold
+      +tags: ['gold', 'analytics']
+
+vars:
+  # Project-specific variables
+  min_track_popularity: 0
+  min_artist_followers: 0

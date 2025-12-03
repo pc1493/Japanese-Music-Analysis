@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: bronze_artists
+    description: "Raw artist data from Spotify API with minimal transformation"
+    columns:
+      - name: artist_id
+        description: "Spotify artist ID"
+        tests:
+          - unique
+          - not_null
+      - name: loaded_at
+        description: "Timestamp when data was loaded"
+        tests:
+          - not_null
+
+  - name: bronze_tracks
+    description: "Raw track data from Spotify API"
+    columns:
+      - name: track_id
+        description: "Spotify track ID"
+        tests:
+          - unique
+          - not_null
+      - name: artist_id
+        description: "Associated artist ID"
+        tests:
+          - not_null
+
+  - name: bronze_audio_features
+    description: "Raw audio feature data from Spotify API"
+    columns:
+      - name: track_id
+        description: "Spotify track ID"
+        tests:
+          - unique
+          - not_null
