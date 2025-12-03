@@ -1,165 +1,213 @@
-# Japanese Music Analytics Project
+# Global Music Analytics Project
 
 ## Overview
-A data engineering project analyzing Japanese music (J-Pop, J-Rock, anime soundtracks, City Pop) using Spotify data. Built with a medallion architecture to showcase data engineering and analytics skills.
+A data engineering portfolio project analyzing global music trends using Spotify data. Built with medallion architecture (Bronze → Silver → Gold) using DuckDB, dbt, and Streamlit to showcase modern data stack proficiency.
+
+**Project Type**: Portfolio / Learning Project
+**Timeline**: 2 weeks
+**Status**: Week 1, Day 3 - Bronze Layer Development
 
 ## Project Goals
-1. Answer interesting questions about Japanese music trends using real data
-2. Build a production-ready medallion architecture (Bronze → Silver → Gold)
-3. Create an interactive dashboard that tells a compelling data story
-4. Demonstrate data engineering best practices for portfolio/employers
+1. **Extract and analyze** 5,000-10,000 tracks from global Spotify playlists
+2. **Build production-ready** medallion architecture with proper data quality checks
+3. **Create interactive dashboard** with meaningful insights about music trends
+4. **Demonstrate data engineering** best practices for portfolio/employers
 
-## Tech Stack (100% Free)
+## Tech Stack (100% Free & Local)
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
-| **Data Source** | Spotify Web API + Spotipy | Extract artist, track, and audio feature data |
-| **Database** | DuckDB | Local analytical database (fast, SQL-based) |
+| **Data Source** | Spotify Web API + Spotipy | Extract artist and track metadata |
+| **Database** | DuckDB | Local embedded analytical database |
 | **Transformation** | dbt-core + dbt-duckdb | SQL-based data transformations |
-| **Orchestration** | Python scripts | Data extraction and loading |
-| **Dashboard** | Streamlit | Interactive visualizations and storytelling |
+| **Orchestration** | Python scripts (manual) | Data extraction and loading |
+| **Visualization** | Streamlit + Plotly | Interactive dashboard |
+| **Database GUI** | DBeaver Community | Visual database exploration |
 | **Version Control** | GitHub | Code repository and portfolio showcase |
 
-## Key Questions to Answer
+All tools run **100% locally** on your machine. No cloud services, no costs.
 
-**Trend & Popularity Analysis:**
-- How has J-Pop vs J-Rock popularity evolved over the last decade?
-- Which Japanese artists are breaking into international markets?
-- What audio features (tempo, energy, danceability) define successful Japanese tracks?
-- Are there seasonal patterns in Japanese music releases?
+---
 
-**Audio DNA Analysis:**
-- What's the "sound signature" of City Pop vs modern J-Pop?
-- How do anime soundtrack artists compare to mainstream artists?
-- Which artists have the most diverse sound across their discography?
+## Key Analytics Questions
 
-**Discovery & Hidden Gems:**
-- What are the high-quality tracks with low popularity?
-- Which Japanese subgenres are growing fastest?
-- Can we predict which indie artists might break out?
+### Popularity & Trends
+- What are the most popular genres globally vs. regionally?
+- How does artist popularity correlate with follower counts?
+- Which artists appear across multiple regional charts (global appeal)?
+- How do release patterns differ by region and genre?
+
+### Discovery & Hidden Gems
+- What tracks have high engagement but low mainstream popularity?
+- Which genres are growing fastest in different regions?
+- Can we identify artists breaking into multiple markets?
+
+### Metadata Analysis
+- What's the distribution of explicit vs. clean content by genre?
+- How do album types (single, album, compilation) affect popularity?
+- What release date precision patterns exist (day/month/year)?
+
+---
 
 ## Project Structure
 
 ```
-japanese-music-analytics/
-├── data/                          # DuckDB database and raw files
-│   ├── bronze/                    # Raw data from API
-│   ├── silver/                    # Cleaned data
-│   ├── gold/                      # Analytics-ready data
-│   └── japanese_music.duckdb      # DuckDB database
+global-music-analytics/
+├── data/
+│   └── japanese_music.duckdb      # DuckDB database (2.8 MB currently)
+│       ├── bronze_artists         # Raw artist data (37 rows → scaling to 2,500)
+│       ├── bronze_tracks          # Raw track data (322 rows → scaling to 10,000)
+│       └── bronze_audio_features  # (0 rows - API deprecated Nov 2024)
 │
 ├── scripts/                       # Python extraction scripts
-│   ├── extract_artists.py         # Fetch artist data from Spotify
-│   ├── extract_tracks.py          # Fetch track data
-│   ├── extract_audio_features.py  # Fetch audio features
-│   └── load_to_bronze.py          # Load data into DuckDB
+│   ├── extract_and_load_bronze.py # Current: Genre-based search (limited)
+│   ├── extract_from_playlists.py  # Next: Playlist-based extraction (TBD)
+│   ├── query_bronze.py            # One-off SQL queries via CLI
+│   └── sql_interactive.py         # Interactive SQL session
 │
 ├── japanese_music_dbt/            # dbt project
 │   ├── models/
-│   │   ├── bronze/                # Raw data models
-│   │   ├── silver/                # Cleaned data models
-│   │   └── gold/                  # Analytics models
-│   ├── tests/                     # Data quality tests
-│   └── dbt_project.yml
+│   │   ├── bronze/                # Raw data schemas (exists)
+│   │   ├── silver/                # Cleaned data models (to build)
+│   │   └── gold/                  # Analytics models (to build)
+│   ├── profiles.yml               # DuckDB connection config
+│   └── dbt_project.yml            # dbt configuration
 │
-├── dashboard/                     # Streamlit dashboard
-│   ├── app.py                     # Main dashboard application
-│   └── utils/                     # Helper functions
+├── dashboard/                     # Streamlit dashboard (Week 2)
+│   └── app.py                     # (To build)
 │
-├── docs/                          # Documentation
-│   └── architecture_diagram.png
+├── docs/
+│   ├── SETUP_GUIDE.md             # Step-by-step setup instructions
+│   └── PROJECT_STATUS.md          # Detailed progress tracking
 │
-├── config/                        # Configuration files
+├── config/
 │   └── .env.example               # Spotify API credentials template
 │
 ├── requirements.txt               # Python dependencies
-├── .gitignore
-└── README.md
+├── .gitignore                     # Protects .env and sensitive files
+├── .env                           # Spotify credentials (gitignored)
+├── test_spotify.py                # API connection test
+├── explore_data.ipynb             # Jupyter notebook for exploration
+└── README.md                      # This file
 ```
+
+---
 
 ## Medallion Architecture
 
 ### Bronze Layer (Raw Data)
-- **Purpose**: Store raw data exactly as received from Spotify API
-- **Characteristics**: Minimal transformation, full audit trail, JSON-like structure
-- **Tables**:
-  - `bronze_artists` - Raw artist metadata
-  - `bronze_tracks` - Raw track information
-  - `bronze_audio_features` - Raw audio feature data
+**Purpose**: Store raw data exactly as received from Spotify API
+**Status**: ✅ Tables created, initial data loaded (needs scaling)
+
+**Tables**:
+- `bronze_artists` - Artist metadata (ID, name, genres, popularity, followers, URLs)
+- `bronze_tracks` - Track information (ID, name, artist, album, release date, popularity, duration)
+- `bronze_audio_features` - *Empty* (API deprecated Nov 27, 2024 - 403 errors)
+
+**Characteristics**:
+- No transformations, store raw JSON
+- Full audit trail with `loaded_at` timestamps
+- Uses `INSERT OR REPLACE` for idempotency
 
 ### Silver Layer (Cleaned & Standardized)
-- **Purpose**: Clean, deduplicate, and standardize data
-- **Characteristics**: Type casting, null handling, standardized formats
-- **Tables**:
-  - `silver_artists` - Cleaned artist data
-  - `silver_tracks` - Cleaned track data with proper typing
-  - `silver_audio_features` - Validated audio features
+**Purpose**: Clean, deduplicate, and standardize data
+**Status**: ⬜ To be built with dbt
+
+**Planned Tables**:
+- `silver_artists` - Cleaned artist data with parsed genres array
+- `silver_tracks` - Standardized tracks with proper date typing
+
+**Transformations**:
+- Parse JSON fields (genres) into arrays
+- Handle null values with business rules
+- Cast types properly (dates, integers)
+- Remove duplicates
+- Data quality tests (not null, unique, accepted values)
 
 ### Gold Layer (Analytics-Ready)
-- **Purpose**: Business logic applied, ready for visualization
-- **Characteristics**: Aggregations, metrics, denormalized for performance
-- **Tables**:
-  - `gold_artist_popularity_trends` - Time-series popularity metrics
-  - `gold_audio_feature_analysis` - Audio feature aggregations by genre
-  - `gold_genre_trends` - Genre growth and patterns
-  - `gold_hidden_gems` - Discovery recommendations
+**Purpose**: Business logic applied, aggregations for dashboard
+**Status**: ⬜ To be built with dbt
 
-## Setup Instructions
+**Planned Tables**:
+- `gold_artist_popularity_metrics` - Aggregated artist stats
+- `gold_genre_trends` - Genre popularity by region
+- `gold_hidden_gems` - High-quality, low-popularity tracks
+- `gold_regional_charts` - Cross-regional artist presence
 
-### 1. Clone and Setup Environment
+---
 
-```bash
-cd "Japanese Music Analysis"
+## Data Pipeline Flow
 
-# Create virtual environment
-python -m venv venv
+```
+1. EXTRACT (Python)
+   Spotify API → scripts/extract_from_playlists.py
+   ↓
 
-# Activate virtual environment
-# Windows:
-venv\Scripts\activate
-# Mac/Linux:
-source venv/bin/activate
+2. LOAD (Python)
+   → DuckDB bronze tables (INSERT OR REPLACE)
+   ↓
 
-# Install dependencies
-pip install -r requirements.txt
+3. TRANSFORM (dbt)
+   Bronze → Silver → Gold
+   ↓
+
+4. VISUALIZE (Streamlit)
+   Gold tables → Interactive dashboard
 ```
 
-### 2. Configure Spotify API Credentials
+**Manual Orchestration**: Each step triggered manually via command line (no scheduler)
 
-1. Go to https://developer.spotify.com/dashboard
-2. Create a new app
-3. Copy Client ID and Client Secret
-4. Create `.env` file:
+---
 
+## How to Use This Project
+
+### Prerequisites
+- Python 3.10+
+- Spotify Developer Account (free)
+- Git installed
+- DBeaver (optional, for visual database access)
+
+### Setup Instructions
+
+See [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md) for detailed setup steps.
+
+**Quick Start**:
 ```bash
-cp config/.env.example .env
-# Edit .env with your credentials
+# 1. Clone repository
+git clone https://github.com/pc1493/Japanese-Music-Analysis.git
+cd Japanese-Music-Analysis
+
+# 2. Activate virtual environment (already set up)
+venv\Scripts\activate  # Windows
+source venv/bin/activate  # Mac/Linux
+
+# 3. Set up Spotify credentials
+# Copy .env.example to .env and add your API keys from
+# https://developer.spotify.com/dashboard
+
+# 4. Test Spotify connection
+python test_spotify.py
+
+# 5. Extract data (current script - limited to 37 artists)
+python scripts/extract_and_load_bronze.py
+
+# 6. Query the database
+python scripts/sql_interactive.py
+# Or open DBeaver and connect to data/japanese_music.duckdb
 ```
 
-### 3. Run Data Extraction (Week 1)
-
-```bash
-# Extract data from Spotify API
-python scripts/extract_artists.py
-python scripts/extract_tracks.py
-python scripts/extract_audio_features.py
-
-# Load into DuckDB bronze layer
-python scripts/load_to_bronze.py
-```
-
-### 4. Run dbt Transformations (Week 1-2)
-
+### Running dbt Transformations (After Silver/Gold models built)
 ```bash
 cd japanese_music_dbt
 
-# Test dbt connection
-dbt debug --profiles-dir .
-
-# Run bronze → silver → gold transformations
+# Run all models
 dbt run --profiles-dir .
 
-# Run data quality tests
+# Run specific layer
+dbt run --profiles-dir . --select silver
+dbt run --profiles-dir . --select gold
+
+# Run tests
 dbt test --profiles-dir .
 
 # Generate documentation
@@ -167,67 +215,86 @@ dbt docs generate --profiles-dir .
 dbt docs serve --profiles-dir .
 ```
 
-### 5. Launch Dashboard (Week 2)
+---
 
-```bash
-# From project root
-streamlit run dashboard/app.py
-```
+## Current Status & Learnings (Day 3)
 
-## Development Workflow
+### ✅ What's Working
+- DuckDB database operational with bronze tables
+- Spotify API connected and authenticated
+- SQL query tools available (DBeaver, interactive Python session)
+- dbt project configured and ready
+- Git repository active with proper .gitignore
 
-1. **Extract**: Python scripts fetch data from Spotify API → Save to JSON
-2. **Load**: Python scripts load JSON → DuckDB bronze tables
-3. **Transform**: dbt models transform bronze → silver → gold
-4. **Test**: dbt tests validate data quality at each layer
-5. **Visualize**: Streamlit dashboard reads from gold layer
+### ⚠️ Blockers Discovered
+1. **Audio Features API Deprecated** (Nov 27, 2024)
+   - Cannot get tempo, energy, danceability, etc.
+   - 403 Forbidden for apps created after cutoff
+   - No official alternative provided by Spotify
+   - **Resolution**: Pivot to metadata-based analysis
 
-## 2-Week Timeline
+2. **Genre-Based Search Too Limited**
+   - Only returned 37 unique artists
+   - Many artists lack genre tags
+   - Max 50 results per search, 2,000 total via pagination
+   - **Resolution**: Switch to playlist-based extraction
 
-### Week 1: Data Foundation
-- **Day 1-2**: Setup, API exploration, finalize questions ✅
-- **Day 3-4**: Bronze layer (raw data extraction and loading)
-- **Day 5-7**: Silver layer (cleaning and standardization)
+### 📊 API Limits Learned
+- **Rate Limit**: ~180 requests per 30 seconds (rolling window)
+- **Search Results**: Max 50 per request, 2,000 total with pagination
+- **Playlist Tracks**: 50-100 tracks per curated playlist
+- **Estimation**: 5,000-10,000 tracks = 15-20 min extraction time
 
-### Week 2: Analytics & Presentation
-- **Day 8-10**: Gold layer (business logic and aggregations)
-- **Day 11-12**: Streamlit dashboard development
-- **Day 13-14**: Polish, deploy, documentation, demo video
+### 🔄 Next Steps
+1. Rewrite extraction script using playlist-based approach
+2. Extract 5,000-10,000 tracks from Spotify's curated/regional playlists
+3. Build dbt Silver layer for data cleaning
+4. Build dbt Gold layer for analytics
+5. Create Streamlit dashboard
 
-## Current Status
+---
 
-✅ Project structure created
-✅ Virtual environment setup
-✅ Dependencies installed
-✅ dbt project initialized with medallion architecture
-⬜ Spotify API configuration
-⬜ Data extraction scripts
-⬜ Bronze layer population
-⬜ Silver layer transformations
-⬜ Gold layer analytics
-⬜ Dashboard development
+## Learning Outcomes
 
-## Next Steps
+This project demonstrates:
+- **Modern data stack** proficiency (DuckDB, dbt, Python)
+- **Medallion architecture** implementation
+- **API integration** with rate limiting and error handling
+- **Data quality** practices (tests, validation, idempotency)
+- **SQL transformation** skills via dbt
+- **Problem-solving** (pivoting when APIs deprecate, finding alternative strategies)
+- **Documentation** and project organization for team collaboration
 
-1. Set up Spotify API credentials (`.env` file)
-2. Write data extraction scripts
-3. Test API connection and explore available data
-4. Refine specific questions based on data availability
+---
 
-## Skills Demonstrated
+## Data Sources & Attribution
 
-- **Data Engineering**: Medallion architecture, data pipeline design
-- **SQL & Transformations**: dbt models with testing
-- **Python**: API integration, data extraction, automation
-- **Data Modeling**: Dimensional modeling concepts
-- **Data Quality**: Testing and validation at each layer
-- **Visualization**: Interactive dashboard with Streamlit
-- **Documentation**: Clear architecture and setup instructions
+**Data Source**: Spotify Web API
+**License**: Data used for educational/portfolio purposes only
+**API Documentation**: https://developer.spotify.com/documentation/web-api
 
-## License
+All data is extracted via official Spotify API with proper authentication. No data is redistributed or stored publicly.
 
-MIT License - Feel free to use this project as a template for your own data engineering portfolio projects!
+---
 
-## Contact
+## Repository
+GitHub: https://github.com/pc1493/Japanese-Music-Analysis
 
-Created for portfolio demonstration. Questions? Open an issue or reach out via LinkedIn.
+---
+
+## References & Resources
+
+**Spotify API**:
+- [Rate Limits Documentation](https://developer.spotify.com/documentation/web-api/concepts/rate-limits)
+- [Search Endpoint Reference](https://developer.spotify.com/documentation/web-api/reference/search)
+- [Recommendations API](https://developer.spotify.com/documentation/web-api/reference/get-recommendations)
+
+**Tools**:
+- [DuckDB Documentation](https://duckdb.org/docs/)
+- [dbt-core Documentation](https://docs.getdbt.com/)
+- [DBeaver DuckDB Setup](https://duckdb.org/docs/stable/guides/sql_editors/dbeaver)
+- [Spotipy Library](https://spotipy.readthedocs.io/)
+
+---
+
+**Built with ❤️ as a data engineering learning project**
