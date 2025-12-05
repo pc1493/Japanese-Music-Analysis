@@ -67,7 +67,7 @@ if page == "📊 Overview":
         COUNT(DISTINCT CASE WHEN is_japanese THEN artist_id END) as japanese_artists,
         COUNT(DISTINCT track_id) as total_tracks,
         COUNT(DISTINCT CASE WHEN has_audio_features THEN track_id END) as tracks_with_audio
-    FROM gold_track_enriched
+    FROM main_gold.gold_track_enriched
     """
     overview = load_data(overview_query)
 
@@ -96,7 +96,7 @@ if page == "📊 Overview":
         SELECT
             popularity_tier,
             COUNT(*) as artist_count
-        FROM gold_artist_metrics
+        FROM main_gold.gold_artist_metrics
         GROUP BY popularity_tier
         ORDER BY
             CASE popularity_tier
@@ -120,7 +120,7 @@ if page == "📊 Overview":
         SELECT
             CASE WHEN is_japanese THEN 'Japanese' ELSE 'Non-Japanese' END as category,
             COUNT(*) as count
-        FROM gold_artist_metrics
+        FROM main_gold.gold_artist_metrics
         GROUP BY is_japanese
         """
         jp_data = load_data(jp_query)
@@ -281,7 +281,7 @@ elif page == "🎸 Genre Analysis":
         ROUND(avg_popularity, 1) as avg_popularity,
         japanese_artist_count,
         ROUND(pct_japanese, 1) as pct_japanese
-    FROM gold_genre_analysis
+    FROM main_gold.gold_genre_analysis
     ORDER BY artist_count DESC
     LIMIT 20
     """
@@ -345,7 +345,7 @@ elif page == "🎼 Audio Features":
         mood_indicator,
         loudness_mean,
         dynamic_complexity
-    FROM gold_audio_insights
+    FROM main_gold.gold_audio_insights
     """
     audio_df = load_data(audio_query)
 
@@ -491,7 +491,7 @@ elif page == "📈 Insights":
             track_count,
             album_count,
             artist_popularity
-        FROM gold_artist_metrics
+        FROM main_gold.gold_artist_metrics
         ORDER BY track_count DESC
         LIMIT 10
         """
@@ -506,7 +506,7 @@ elif page == "📈 Insights":
             genre_count,
             artist_popularity,
             track_count
-        FROM gold_artist_metrics
+        FROM main_gold.gold_artist_metrics
         WHERE genre_count = 1 AND track_count >= 3
         ORDER BY artist_popularity DESC
         LIMIT 10
