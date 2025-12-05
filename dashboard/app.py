@@ -265,7 +265,7 @@ elif page == "👤 Artist Explorer":
                            'followers_total': 'Followers',
                            'popularity_tier': 'Tier'},
                     color_discrete_sequence=px.colors.qualitative.Bold)
-    fig.update_yaxis(type="log")
+    fig.update_yaxes(type="log")
     st.plotly_chart(fig, use_container_width=True)
 
 elif page == "🎸 Genre Analysis":
