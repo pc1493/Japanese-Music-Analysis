@@ -17,6 +17,8 @@ build/
 # DuckDB database files
 *.duckdb
 *.duckdb.wal
+# Exception: Include the main database for Streamlit Cloud deployment
+!data/japanese_music.duckdb
 
 # dbt
 japanese_music_dbt/target/
