@@ -136,7 +136,7 @@ if page == "📊 Overview":
     SELECT
         release_year,
         COUNT(*) as track_count
-    FROM gold_track_enriched
+    FROM main_gold.gold_track_enriched
     WHERE release_year IS NOT NULL AND release_year >= 1990
     GROUP BY release_year
     ORDER BY release_year
@@ -192,7 +192,7 @@ elif page == "👤 Artist Explorer":
         CASE WHEN is_hidden_gem THEN 'Yes' ELSE 'No' END as hidden_gem,
         ROUND(follower_popularity_ratio, 0) as follower_pop_ratio,
         career_span_years as career_span
-    FROM gold_artist_metrics
+    FROM main_gold.gold_artist_metrics
     WHERE {where_clause}
     ORDER BY artist_popularity DESC
     LIMIT 100
@@ -229,7 +229,7 @@ elif page == "👤 Artist Explorer":
         followers_total as followers,
         track_count as tracks,
         ROUND(follower_popularity_ratio, 0) as ratio
-    FROM gold_artist_metrics
+    FROM main_gold.gold_artist_metrics
     WHERE is_hidden_gem = TRUE
     ORDER BY follower_popularity_ratio DESC
     LIMIT 10
@@ -250,7 +250,7 @@ elif page == "👤 Artist Explorer":
         followers_total,
         popularity_tier,
         track_count
-    FROM gold_artist_metrics
+    FROM main_gold.gold_artist_metrics
     WHERE track_count > 0
     """
     scatter_df = load_data(scatter_query)
@@ -464,7 +464,7 @@ elif page == "📈 Insights":
         latest_release_year,
         career_span_years,
         track_count
-    FROM gold_artist_metrics
+    FROM main_gold.gold_artist_metrics
     WHERE career_span_years IS NOT NULL AND career_span_years > 1
     ORDER BY career_span_years DESC
     LIMIT 10
@@ -527,7 +527,7 @@ elif page == "📈 Insights":
         END as availability,
         COUNT(*) as track_count,
         ROUND(AVG(track_popularity), 1) as avg_popularity
-    FROM gold_track_enriched
+    FROM main_gold.gold_track_enriched
     GROUP BY
         CASE
             WHEN globally_available THEN 'Global (100+ markets)'
@@ -551,7 +551,7 @@ elif page == "📈 Insights":
         CASE WHEN explicit THEN 'Explicit' ELSE 'Clean' END as content_type,
         COUNT(*) as track_count,
         ROUND(AVG(track_popularity), 1) as avg_popularity
-    FROM gold_track_enriched
+    FROM main_gold.gold_track_enriched
     GROUP BY explicit
     """
     explicit_df = load_data(explicit_query)
